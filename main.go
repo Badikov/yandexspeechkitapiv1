@@ -10,8 +10,8 @@ import (
 )
 
 type Config struct {
-	APP_ENV  string `mapstructure:"APP_ENV"`
-	API_KEY  string `mapstructure:"API_KEY"`
+	APP_ENV   string `mapstructure:"APP_ENV"`
+	API_KEY   string `mapstructure:"API_KEY"`
 	TTS_HTTPS string `mapstructure:"TTS_HTTPS"`
 	STT_HTTPS string `mapstructure:"STT_HTTPS"`
 	VOICE     string `mapstructure:"VOICE"`
@@ -56,7 +56,11 @@ func YandexSpeechKit(pach_file, some_text string) string {
 		log.Println(pachAudio)
 		return pachAudio
 	} else if pach_file != "" && some_text == "" {
-		some_text = speechtotext.SpeechToText(pach_file, config.API_KEY,config.STT_HTTPS)
+		some_text, err = speechtotext.SpeechToText(pach_file, config.API_KEY,config.STT_HTTPS)
+		if err != nil {
+			log.Fatalf("I can't get text string: %v", err)
+			return ""
+		}
 		log.Println(some_text)
 		return some_text
 	}

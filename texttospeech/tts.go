@@ -49,7 +49,7 @@ func TextToSpeech(some_text string, apiKey string, voice string,http_addres stri
 	
 	tmpfileName := ulid.Make().String() + ".ogg"
 
-	abs,err := filepath.Abs("./tmp/" + tmpfileName)
+	abs, err := filepath.Abs("./tmp/" + tmpfileName)
 	if err != nil {
 		log.Fatalf("can't get .ogg file pach: %v", err)
 	}

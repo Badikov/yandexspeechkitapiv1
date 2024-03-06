@@ -2,7 +2,7 @@ package speechtotext
 
 import (
 	"bytes"
-	"io"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -11,7 +11,7 @@ import (
 // максимальный размер файла — 1 МБ;
 // максимальная длительность — 30 секунд;
 // максимальное количество аудиоканалов — 1.
-func SpeechToText(file_pach string, apiKey string, stt_https_url string) (string) {
+func SpeechToText(file_pach string, apiKey string, stt_https_url string) (string, error) {
 	audioData, err := os.ReadFile(file_pach)
 	if err != nil {
 		log.Fatalf("I can't read the audio file: %v", err)
@@ -33,14 +33,15 @@ func SpeechToText(file_pach string, apiKey string, stt_https_url string) (string
 	log.Println("\nResponse Status", res.Status)
 	log.Println("\nResponse Headers", res.Header)
 
-	body, err := io.ReadAll(res.Body) // response body is []byte
-	if err != nil {
-		log.Fatalf("I can't get response: %v", err)
+	var r struct {
+		Result string `json:"result,omitempty"`
 	}
 
-	log.Println(string(body))
+	dec := json.NewDecoder(res.Body)
 
-	// str := string(body[:])
+	if err := dec.Decode(&r); err != nil {
+		return "", err
+	}
 
-	return string(body)
+	return r.Result, nil
 }
